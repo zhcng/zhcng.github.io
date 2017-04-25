@@ -22,7 +22,7 @@
 <meta property="og:url" content="http://zhcng.github.io/2017/04/25/一步一步使用Hexo搭建Githup博客/index.html">
 <meta property="og:site_name" content="博客--Chen">
 <meta property="og:description" content="最近看到不少人在使用Hexo搭建自己的个人博客，很感兴趣。于是找了一些资料，踩了一些坑，也搭建了属于自己的博客。以下为搭建的步骤(Windows环境)。">
-<meta property="og:updated_time" content="2017-04-25T10:00:45.516Z">
+<meta property="og:updated_time" content="2017-04-25T10:05:05.036Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="一步一步使用Hexo搭建Github博客">
 <meta name="twitter:description" content="最近看到不少人在使用Hexo搭建自己的个人博客，很感兴趣。于是找了一些资料，踩了一些坑，也搭建了属于自己的博客。以下为搭建的步骤(Windows环境)。">
@@ -313,12 +313,12 @@
 <h2 id="配置Github"><a href="#配置Github" class="headerlink" title="配置Github"></a>配置Github</h2><h3 id="注册Github账号"><a href="#注册Github账号" class="headerlink" title="注册Github账号"></a>注册Github账号</h3><p>到<a href="https://github.com/" target="_blank" rel="external">Github官网</a>，填写用户名、邮箱、密码即可完成注册。</p>
 <h3 id="创建仓库"><a href="#创建仓库" class="headerlink" title="创建仓库"></a>创建仓库</h3><p>注册完后就可以点击New repository，新建一个仓库。这里要注意，仓库的名称，必须是你的用户名.github.io，比如我的仓库名为：zhcng.github.io。</p>
 <h3 id="添加SSH密钥"><a href="#添加SSH密钥" class="headerlink" title="添加SSH密钥"></a>添加SSH密钥</h3><p>首先得明确一点，这一步不是必须的。如果不添加，每次博客有改动提交的时候就需要手动输入账号密码，配置了就不需要了。所以建议可以在常用的个人电脑上添加一下。</p>
-<p>SSH公钥默认在C:\Users\Administrator.ssh目录下，如果没有这个目录，需要手动生成一下。直接到Git的程序目录里，运行git-bash.exe，然后运行以下指令。</p>
+<p>SSH公钥默认在C:\Users\Administrator<code>\</code>.ssh目录下，如果没有这个目录，需要手动生成一下。直接到Git的程序目录里，运行git-bash.exe，然后运行以下指令。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">cd</span> ~</div></pre></td></tr></table></figure>
 <p>这条指令中的邮箱名填写自己的邮箱，打完指令根据提示连续三个回车，设置密码为空即可。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ssh-keygen -t rsa -C <span class="string">"artistzheng@163.com"</span></div></pre></td></tr></table></figure>
 <p>注意，ssh与-keygen之间是没有空格的，否则会报 Bad escape character ‘ygen’。</p>
-<p>运行完指令后，在C:\Users\Administrator.ssh目录下找到id_rsa.pub，复制里面所有字符，到<a href="https://github.com/settings/ssh" target="_blank" rel="external">Github设置SSH</a>的页面,New SSH key，粘贴进去就添加完毕了。</p>
+<p>运行完指令后，在C:\Users\Administrator<code>\</code>.ssh目录下找到id_rsa.pub，复制里面所有字符，到<a href="https://github.com/settings/ssh" target="_blank" rel="external">Github设置SSH</a>的页面,New SSH key，粘贴进去就添加完毕了。</p>
 <h2 id="最终部署"><a href="#最终部署" class="headerlink" title="最终部署"></a>最终部署</h2><h3 id="全局配置"><a href="#全局配置" class="headerlink" title="全局配置"></a>全局配置</h3><p>首先，先来了解一下hexo的主要目录结构。</p>
 <ul>
 <li>.deploy_git <code>#</code>需要部署的文件</li>
@@ -367,7 +367,7 @@
         <p><span>本文标题:</span><a href="/2017/04/25/一步一步使用Hexo搭建Githup博客/">一步一步使用Hexo搭建Github博客</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Chen</a></p>
         <p><span>发布时间:</span>2017-04-25, 10:21:52</p>
-        <p><span>最后更新:</span>2017-04-25, 18:00:45</p>
+        <p><span>最后更新:</span>2017-04-25, 18:05:05</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2017/04/25/一步一步使用Hexo搭建Githup博客/" title="一步一步使用Hexo搭建Github博客">http://zhcng.github.io/2017/04/25/一步一步使用Hexo搭建Githup博客/</a>
             <span class="copy-path" data-clipboard-text="原文: http://zhcng.github.io/2017/04/25/一步一步使用Hexo搭建Githup博客/　　作者: Chen" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
