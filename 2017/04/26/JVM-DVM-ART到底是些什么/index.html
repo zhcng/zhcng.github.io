@@ -15,15 +15,17 @@
 
 
 
-<meta name="description" content="Chen的个人博客">
-<meta property="og:type" content="website">
-<meta property="og:title" content="博客--Chen">
-<meta property="og:url" content="http://zhcng.github.io/archives/2017/index.html">
+<meta name="description" content="自从学习Java和Android开始，就会陆续的听到JVM、DVM、ART这些名词，然而它们到底是些什么呢，有什么相同又有什么区别呢？下面就来深入了解一下。">
+<meta name="keywords" content="虚拟机">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JVM,DVM,ART到底是些什么">
+<meta property="og:url" content="http://zhcng.github.io/2017/04/26/JVM-DVM-ART到底是些什么/index.html">
 <meta property="og:site_name" content="博客--Chen">
-<meta property="og:description" content="Chen的个人博客">
+<meta property="og:description" content="自从学习Java和Android开始，就会陆续的听到JVM、DVM、ART这些名词，然而它们到底是些什么呢，有什么相同又有什么区别呢？下面就来深入了解一下。">
+<meta property="og:updated_time" content="2017-04-27T06:55:43.838Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="博客--Chen">
-<meta name="twitter:description" content="Chen的个人博客">
+<meta name="twitter:title" content="JVM,DVM,ART到底是些什么">
+<meta name="twitter:description" content="自从学习Java和Android开始，就会陆续的听到JVM、DVM、ART这些名词，然而它们到底是些什么呢，有什么相同又有什么区别呢？下面就来深入了解一下。">
 
 <link rel="apple-touch-icon" href= "/apple-touch-icon.png">
 
@@ -55,7 +57,7 @@
 <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
 
 
-<title>Archives: 2017 | 博客--Chen</title>
+<title>JVM,DVM,ART到底是些什么 | 博客--Chen</title>
 
 <script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
@@ -65,8 +67,8 @@
         fancybox: true,
         animate: true,
         isHome: false,
-        isPost: false,
-        isArchive: true,
+        isPost: true,
+        isArchive: false,
         isTag: false,
         isCategory: false,
         fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
@@ -263,134 +265,225 @@
     </div>
     <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
 </nav>
-      <div class="body-wrap">
+      <div class="body-wrap"><article id="post-JVM-DVM-ART到底是些什么" class="article article-type-post" itemscope itemprop="blogPost">
   
-  
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2017" class="archive-year">2017</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-          <div class="article-meta">
-              <a href="/2017/04/26/JVM-DVM-ART到底是些什么/" class="archive-article-date">
-      <time datetime="2017-04-26T09:49:33.000Z" itemprop="datePublished">04-26</time>
+    <div class="article-meta">
+      <a href="/2017/04/26/JVM-DVM-ART到底是些什么/" class="article-date">
+      <time datetime="2017-04-26T09:49:33.000Z" itemprop="datePublished">2017-04-26</time>
 </a>
 
 
-        </div>
-         
+    </div>
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/04/26/JVM-DVM-ART到底是些什么/">JVM,DVM,ART到底是些什么</a>
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      JVM,DVM,ART到底是些什么
     </h1>
   
 
-        <div class="article-info info-on-archive">
-          
+      </header>
+      
+      <div class="article-info article-info-post">
+        
     <div class="article-category tagcloud">
     <a class="article-category-link" href="/categories/Android/">Android</a>
     </div>
 
 
-          
+        
     <div class="article-tag tagcloud">
         <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/虚拟机/">虚拟机</a></li></ul>
     </div>
 
-        </div>
         <div class="clearfix"></div>
-    </header>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>自从学习Java和Android开始，就会陆续的听到JVM、DVM、ART这些名词，然而它们到底是些什么呢，有什么相同又有什么区别呢？下面就来深入了解一下。</p>
+<a id="more"></a>
+<h2 id="JVM"><a href="#JVM" class="headerlink" title="JVM"></a>JVM</h2><blockquote>
+<p>JVM全称是Java Virtual Machine，意为Java虚拟机。其本质是一个能够运行以Java语言编写程序的软件。</p>
+</blockquote>
+<p>Java在编译后会生成类似于汇编语言的Java字节码。但与C语言编译后产生的汇编语言不同的是，汇编语言会直接在硬件上跑，但Java字节码是在JVM上跑。需要由JVM把字节码翻译成机器指令，才能使Java程序跑起来。</p>
+<p>JVM远行在操作系统上，屏蔽了底层实现的差异。JRE（Java Runtime Environment，包括JVM、Java核心类库和支持文件）编译时针对每个平台，因此下载JRE时是分平台的。JVM把平台无关的.class里面的字节码翻译成平台相关的机器码。从而实现了Java的跨平台。</p>
+<h2 id="DVM"><a href="#DVM" class="headerlink" title="DVM"></a>DVM</h2><blockquote>
+<p>DVM全称是Dalvik Virtual Machine（Dalvik是作者的祖先曾经居住过的小渔村名字，位于冰岛），是Android中使用的虚拟机。</p>
+</blockquote>
+<p>所有Android程序都运行在Android系统进程里，每一个进程都对应一个Dalvik虚拟机实例。这样，独立的进程可以防止在虚拟机崩溃时所有程序都被关闭。以下列出DVM和JVM的区别。</p>
+<ul>
+<li><strong>运行的字节码不同</strong></li>
+</ul>
+<p>Java程序经过编译，生成Java字节码保存在class文件中，JVM通过解码class文件中的内容来运行程序。</p>
+<p>而DVM运行的是Dalvik字节码。所有的Dalvik字节码是由dx工具，将Java字节码转换而来，并被打包到dex（Dalvik Executable）可执行文件中，DVM通过解释dex文件来执行Dalvik字节码。</p>
+<ul>
+<li><strong>可执行文件体积不同</strong></li>
+</ul>
+<p>dx工具会对Java类程序重新排列，把多个类包含在一个dex文件之中。各个类中重复的字符串和其他常数在dex中只存放一次，以节省空间。所以，Dalvik可执行文件体积更小。</p>
+<ul>
+<li><strong>JVM基于栈，DVM基于寄存器</strong></li>
+</ul>
+<p>JVM基于栈结构，程序在运行时虚拟机需要频繁地从栈上读写数据，这个过程需要更多的指令分派和内存访问次数，会耗费很多CPU时间。</p>
+<p>DVM基于寄存器，数据的访问通过寄存器直接传递，要快很多。</p>
+<p>两种架构各有优劣。一般而言，基于堆栈的机器需要更多指令，基于寄存器的机器指令更长。</p>
+<h2 id="ART"><a href="#ART" class="headerlink" title="ART"></a>ART</h2><blockquote>
+<p>ART全称是Android Runtime，在2013年作为Android4.4系统中的一项测试功能正式对外发布，在5.0及后续版本中作为正式的运行时库取代了以往的DVM。</p>
+</blockquote>
+<p>ART与DVM主要不同在于：DVM采用的是JIT技术，而ART采用的是AOT技术。同时ART也改善了性能、垃圾回收、应用程序排错以及性能分析。</p>
+<blockquote>
+<p>JIT全称是Just In Time，意为即时编译技术。AOT全称是Ahead Of Time，意为预编译技术。它们是两种不同的编译模式。</p>
+</blockquote>
+<p>DVM执行的是dex字节码，依靠JIT编译器去解释执行，运行时动态的将执行效率很高的dex字节码翻译成本地机器码,然后再执行。而ART直接执行的是本地机器码，在应用程序安装过程中，ART就已经将所有字节码重新编译成了机器码。</p>
+<p>DVM的解码过程发生在应用程序的运行过程中，并且应用程序每次重新运行，都要重复这个解码过程。而ART在应用程序运行过程中无需进行实时的编译工作，只需进行直接调用。因此，即使采用了JIT,DVM的总体性能还是不能与ART相比。</p>
+<p>总的来说，ART的优点在于：提高了应用程序的运行效率，减少了手机的电量消耗，提高了移动设备的续航能力，在垃圾回收等机制上也有了较大的提升。而它的缺点在于：ART模式下Android应用程序的安装需要消耗更多的时间，同时也会占用更大的储存空间（大约增加10%~20%）。</p>
+
+      
+    </div>
+    
   </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2017/04/26/JVM-DVM-ART到底是些什么/">JVM,DVM,ART到底是些什么</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">Chen</a></p>
+        <p><span>发布时间:</span>2017-04-26, 17:49:33</p>
+        <p><span>最后更新:</span>2017-04-27, 14:55:43</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2017/04/26/JVM-DVM-ART到底是些什么/" title="JVM,DVM,ART到底是些什么">http://zhcng.github.io/2017/04/26/JVM-DVM-ART到底是些什么/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://zhcng.github.io/2017/04/26/JVM-DVM-ART到底是些什么/　　作者: Chen" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/2017/04/26/学而时习之-Android知识点/">
+                    学而时习之--Android知识点
+                </a>
+            </div>
+        
+        
+    </nav>
+
+  
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-          <div class="article-meta">
-              <a href="/2017/04/26/学而时习之-Android知识点/" class="archive-article-date">
-      <time datetime="2017-04-26T08:10:06.000Z" itemprop="datePublished">04-26</time>
-</a>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#JVM"><span class="toc-number">1.</span> <span class="toc-text">JVM</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#DVM"><span class="toc-number">2.</span> <span class="toc-text">DVM</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ART"><span class="toc-number">3.</span> <span class="toc-text">ART</span></a></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
 
 
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
         </div>
-         
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/04/26/学而时习之-Android知识点/">学而时习之--Android知识点</a>
-    </h1>
-  
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"JVM,DVM,ART到底是些什么　| 博客--Chen　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
 
-        <div class="article-info info-on-archive">
-          
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/Android/">Android</a>
+    
+</div>
+
+
+
+
+
+
+
+    
+        <section id="comments">
+    <style> aside.comment-bar { margin: auto 30px; }</style>
+    <div id="disqus_thread"></div>
+    <script>
+        var disqus_config = function(){
+            this.page.url = 'http://zhcng.github.io/2017/04/26/JVM-DVM-ART到底是些什么/';
+            this.page.identifier = '2017/04/26/JVM-DVM-ART到底是些什么/';
+        };
+        var loadComment = function(){
+            var d = document, s = d.createElement('script');
+            s.src = '//zhcng.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        }
+    </script>
+    
+    <script> loadComment(); </script>
+
+</section>
+
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/2017/04/26/学而时习之-Android知识点/" title="上一篇: 学而时习之--Android知识点">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+        
     </div>
 
-
-          
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/知识点/">知识点</a></li></ul>
-    </div>
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-          <div class="article-meta">
-              <a href="/2017/04/25/一步一步使用Hexo搭建Githup博客/" class="archive-article-date">
-      <time datetime="2017-04-25T02:21:52.000Z" itemprop="datePublished">04-25</time>
-</a>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2017/04/26/JVM-DVM-ART到底是些什么/">JVM,DVM,ART到底是些什么</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/04/26/学而时习之-Android知识点/">学而时习之--Android知识点</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/04/25/一步一步使用Hexo搭建Githup博客/">一步一步使用Hexo搭建Github博客</a></li></ul>
 
 
-        </div>
-         
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/04/25/一步一步使用Hexo搭建Githup博客/">一步一步使用Hexo搭建Github博客</a>
-    </h1>
-  
-
-        <div class="article-info info-on-archive">
-          
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/Hexo/">Hexo</a>
-    </div>
 
 
-          
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Yelee/">Yelee</a></li></ul>
-    </div>
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
-
-    
-
+    <script>
+        
+    </script>
 </div>
       <footer id="footer">
     <div class="outer">
