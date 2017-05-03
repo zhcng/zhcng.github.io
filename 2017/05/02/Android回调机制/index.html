@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no" />
+<meta name="author" content="Chen" />
+
+
+
+<meta name="description" content="回调就是A类中调用B类的方法b，然后B类中反过来调用A类的方法a。a这个方法就是回调方法。">
+<meta name="keywords" content="回调">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android回调机制">
+<meta property="og:url" content="http://zhcng.github.io/2017/05/02/Android回调机制/index.html">
+<meta property="og:site_name" content="博客--Chen">
+<meta property="og:description" content="回调就是A类中调用B类的方法b，然后B类中反过来调用A类的方法a。a这个方法就是回调方法。">
+<meta property="og:updated_time" content="2017-05-03T03:32:16.439Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android回调机制">
+<meta name="twitter:description" content="回调就是A类中调用B类的方法b，然后B类中反过来调用A类的方法a。a这个方法就是回调方法。">
+
+<link rel="apple-touch-icon" href= "/apple-touch-icon.png">
+
+
+    <link rel="alternate" href="/atom.xml" title="博客--Chen" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/img/lufei_favicon.ico">
+
+
+
+    <link href="//cdn.bootcss.com/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+    <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>Android回调机制 | 博客--Chen</title>
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: true,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: undefined
+    }
+</script>
+
+
+    <script>
+        yiliaConfig.jquery_ui = [true, "//cdn.bootcss.com/jqueryui/1.10.4/jquery-ui.min.js", "//cdn.bootcss.com/jqueryui/1.10.4/css/jquery-ui.min.css"];
+    </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/img/lufei.jpg" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/">Chen</a></h1>
+        </hgroup>
+
+        
+        <p class="header-subtitle">诗酒趁年华</p>
+        
+
+        
+
+
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                        <li>关于我</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">主页</a></li>
+                        
+                            <li><a href="/archives/">所有文章</a></li>
+                        
+                            <li><a href="/tags/">标签云</a></li>
+                        
+                            <li><a href="/about/">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" href="mailto:artistzheng@163.com" title="Email"></a>
+                            
+                                <a class="fa 知乎" href="https://www.zhihu.com/people/guai-shou-39/activities" title="知乎"></a>
+                            
+                                <a class="fa 网易云音乐" href="http://music.163.com/#/user/home?id=56750088" title="网易云音乐"></a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Yelee/">Yelee</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/加密/">加密</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/回调/">回调</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/知识点/">知识点</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/虚拟机/">虚拟机</a></li></ul>
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a class="main-nav-link switch-friends-link" href="http://www.xueandroid.com/">玩Android</a>
+                    
+                      <a class="main-nav-link switch-friends-link" href="http://www.apkbus.com/">AndroidBus</a>
+                    
+                      <a class="main-nav-link switch-friends-link" href="http://reactnative.cn/">ReactNative中文网</a>
+                    
+                      <a class="main-nav-link switch-friends-link" href="http://www.iconfont.cn/">阿里妈妈图标库</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">谦谦君子 温润如玉</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">Chen</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/img/lufei.jpg" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页">Chen</a></h1>
+            </hgroup>
+            
+            <p class="header-subtitle">诗酒趁年华</p>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">主页</a></li>
+                
+                    <li><a href="/archives/">所有文章</a></li>
+                
+                    <li><a href="/tags/">标签云</a></li>
+                
+                    <li><a href="/about/">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" target="_blank" href="mailto:artistzheng@163.com" title="Email"></a>
+                            
+                                <a class="fa 知乎" target="_blank" href="https://www.zhihu.com/people/guai-shou-39/activities" title="知乎"></a>
+                            
+                                <a class="fa 网易云音乐" target="_blank" href="http://music.163.com/#/user/home?id=56750088" title="网易云音乐"></a>
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
+</nav>
+      <div class="body-wrap"><article id="post-Android回调机制" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2017/05/02/Android回调机制/" class="article-date">
+      <time datetime="2017-05-02T07:06:00.000Z" itemprop="datePublished">2017-05-02</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Android回调机制
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/Android/">Android</a>
+    </div>
+
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/回调/">回调</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>回调就是A类中调用B类的方法b，然后B类中反过来调用A类的方法a。a这个方法就是回调方法。</p>
+<a id="more"></a>
+<h2 id="概念分析"><a href="#概念分析" class="headerlink" title="概念分析"></a>概念分析</h2><p>直接看回调概念，可能会是一头雾水，这个绕口令在说啥。那么就用一个现实生活中的场景，来模拟一下回调。</p>
+<p>有一天，老板有一个活，需要员工来完成。老板很忙，有很多其他事，不能等着员工一直到这个活干完。于是他告诉员工，干完这个活后，就去办公室通知他。过了一天，员工打电话告诉老板，活干完了。通知老板这个行为就是一种回调。</p>
+<h2 id="实际意义"><a href="#实际意义" class="headerlink" title="实际意义"></a>实际意义</h2><p>那么，为什么要用到回调呢？首先，编码过程中可能会出现像上面安排活一样的异步耗时需求。其次，回调增强了代码的可扩展性。</p>
+<p>比如我们在使用框架的时候，直接调用框架提供的API就可以了。但如果我们想让框架来调用自己写的类中方法，该如何实现呢？难道要去改框架中的代码吗？所以，优秀的框架都会提供好相关的回调接口。我们只需要实现相关的接口，即可完成注册，让框架在合适的时候调用我们自己写的类。</p>
+<p>可以反回头再读一下回调的定义：<strong>A类中调用B类的方法b，然后B类中反过来调用A类的方法a</strong>。这里我们写的类就是A,框架就是B。这样，不用去修改框架B，只去改自己的类A,就可以个性化定制框架所调用的方法，增强框架的代码扩展性。</p>
+<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><p>下面，以老板让员工干活，员工干完通知老板为例，用代码实现这一需求。</p>
+<h3 id="回调接口"><a href="#回调接口" class="headerlink" title="回调接口"></a>回调接口</h3><p>首先，定义一个回调接口，里面定义一个回调函数。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//回调接口，老板要实现此接口</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">CallBack</span> </span>&#123;</div><div class="line">    <span class="comment">//提供联系方法（办公室地址），用来接收员工的汇报</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">receive</span><span class="params">()</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="老板类"><a href="#老板类" class="headerlink" title="老板类"></a>老板类</h3><p>然后创建回调对象，即老板类。因为员工干完活要通知老板，所以老板要实现回调接口，提供联系方法，接收员工的汇报。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//老板类，实现回调接口</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Boss</span> <span class="keyword">implements</span> <span class="title">CallBack</span> </span>&#123;</div><div class="line">	<span class="comment">//员工对象的引用</span></div><div class="line">    <span class="keyword">private</span> Employee employee;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Boss</span><span class="params">(Employee employee)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.employee = employee;</div><div class="line">    &#125;</div><div class="line">    <span class="comment">//分配活给员工</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">assign</span><span class="params">()</span> </span>&#123;</div><div class="line">        employee.setCallBack(Boss.<span class="keyword">this</span>);</div><div class="line">        employee.work();</div><div class="line">    &#125;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">receive</span><span class="params">()</span> </span>&#123;</div><div class="line">        System.out.println(<span class="string">"我知道这个活已经做完了"</span>);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="员工类"><a href="#员工类" class="headerlink" title="员工类"></a>员工类</h3><p>接着创建控制对象，即员工类。他必须要知道老板的地址（持有回调接口），才能跟老板进行汇报。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//员工类</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Employee</span> </span>&#123;</div><div class="line">    <span class="keyword">public</span> CallBack callBack = <span class="keyword">null</span>;</div><div class="line">    <span class="comment">//进行注册，获取老板的联系方式</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setCallBack</span><span class="params">(CallBack callBack)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.callBack = callBack;</div><div class="line">    &#125;</div><div class="line">    <span class="comment">//员工干活</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">work</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="comment">//1.开始干活</span></div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">10</span>;i++) &#123;</div><div class="line">            System.out.println(<span class="string">"事情的第"</span>+i+<span class="string">"步干完了"</span>);</div><div class="line">        &#125;</div><div class="line">        <span class="comment">//2.通知老板</span></div><div class="line">        callBack.receive();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="测试类"><a href="#测试类" class="headerlink" title="测试类"></a>测试类</h3><p>最后创建测试类。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test</span><span class="params">()</span> </span>&#123;</div><div class="line">        Employee employee = <span class="keyword">new</span> Employee();</div><div class="line">        Boss boss = <span class="keyword">new</span> Boss(employee);</div><div class="line">        boss.assign();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="步骤总结"><a href="#步骤总结" class="headerlink" title="步骤总结"></a>步骤总结</h2><ol>
+<li>定义一个回调接口CallBack。</li>
+<li>创建一个回调对象Class A，实现回调接口CallBack。</li>
+<li>创建一个控制对象Class B，含有一个参数为CallBack的方法。 </li>
+<li>回调对象Class A中包含一个控制对象Class B的引用。</li>
+<li>Class A调用Class B的方法b。</li>
+<li>Class B就可以在b方法中调用Class A的方法a。</li>
+</ol>
+<h2 id="Android实例"><a href="#Android实例" class="headerlink" title="Android实例"></a>Android实例</h2><p>Android中View的点击事件就用到了回调机制。下面就用这个Andriod中最常见的代码做一下简单分析。</p>
+<p>首先是有一个回调接口OnClickListener。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//这个是View的一个回调接口  </span></div><div class="line"><span class="comment">//Interface definition for a callback to be invoked when a view is clicked.  </span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">OnClickListener</span> </span>&#123;  </div><div class="line">	<span class="comment">//Called when a view has been clicked. </span></div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View v)</span></span>;  </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>然后是有一个控制对象View，包含一个参数为OnClickListener的方法setOnClickListener。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">View</span> <span class="keyword">implements</span> <span class="title">Drawable</span>.<span class="title">Callback</span>, <span class="title">KeyEvent</span>.<span class="title">Callback</span>, <span class="title">AccessibilityEventSource</span> </span>&#123;   </div><div class="line">    <span class="keyword">protected</span> OnClickListener mOnClickListener;    </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setOnClickListener</span><span class="params">(OnClickListener l)</span> </span>&#123;  </div><div class="line">        <span class="keyword">if</span> (!isClickable()) &#123;  </div><div class="line">            setClickable(<span class="keyword">true</span>);  </div><div class="line">        &#125;  </div><div class="line">        mOnClickListener = l;  </div><div class="line">    &#125;  </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">performClick</span><span class="params">()</span> </span>&#123;  </div><div class="line">        sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_CLICKED);  </div><div class="line">        <span class="keyword">if</span> (mOnClickListener != <span class="keyword">null</span>) &#123;  </div><div class="line">            playSoundEffect(SoundEffectConstants.CLICK);    </div><div class="line">            <span class="comment">//B类调用A类的方法onClick()，这个onClick()就是回调方法  </span></div><div class="line">            mOnClickListener.onClick(<span class="keyword">this</span>);  </div><div class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;  </div><div class="line">        &#125;  </div><div class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;  </div><div class="line">    &#125;  </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>接着是在回调对象MainActivity中实现回调接口OnClickListener，包含控制对象View的引用button，并调用控制对象View的方法setOnClickListener。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">Activity</span> <span class="keyword">implements</span> <span class="title">OnClickListener</span></span>&#123;  </div><div class="line">    <span class="keyword">private</span> Button button;  </div><div class="line">    <span class="meta">@Override</span>  </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;  </div><div class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);  </div><div class="line">        setContentView(R.layout.activity_main);  </div><div class="line">        button = (Button)findViewById(R.id.button1);    </div><div class="line">        button.setOnClickListener(<span class="keyword">this</span>);  </div><div class="line">    &#125;  </div><div class="line">    <span class="comment">//用户点击Button时调用的回调函数，可以个性化定义 </span></div><div class="line">    <span class="meta">@Override</span>  </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View v)</span> </span>&#123;  </div><div class="line">        Toast.makeText(getApplication(), <span class="string">"点击了"</span>, Toast.LENGTH_LONG).show();  </div><div class="line">    &#125; </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>可以对比上面总结出来的步骤，感受Android的点击事件是如何一步一步实现回调的。</p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2017/05/02/Android回调机制/">Android回调机制</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">Chen</a></p>
+        <p><span>发布时间:</span>2017-05-02, 15:06:00</p>
+        <p><span>最后更新:</span>2017-05-03, 11:32:16</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2017/05/02/Android回调机制/" title="Android回调机制">http://zhcng.github.io/2017/05/02/Android回调机制/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://zhcng.github.io/2017/05/02/Android回调机制/　　作者: Chen" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/2017/05/02/Android数据加密/">
+                    Android数据加密
+                </a>
+            </div>
+        
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#概念分析"><span class="toc-number">1.</span> <span class="toc-text">概念分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实际意义"><span class="toc-number">2.</span> <span class="toc-text">实际意义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码实现"><span class="toc-number">3.</span> <span class="toc-text">代码实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#回调接口"><span class="toc-number">3.1.</span> <span class="toc-text">回调接口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#老板类"><span class="toc-number">3.2.</span> <span class="toc-text">老板类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#员工类"><span class="toc-number">3.3.</span> <span class="toc-text">员工类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试类"><span class="toc-number">3.4.</span> <span class="toc-text">测试类</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#步骤总结"><span class="toc-number">4.</span> <span class="toc-text">步骤总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Android实例"><span class="toc-number">5.</span> <span class="toc-text">Android实例</span></a></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"Android回调机制　| 博客--Chen　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+        <section id="comments">
+    <style> aside.comment-bar { margin: auto 30px; }</style>
+    <div id="disqus_thread"></div>
+    <script>
+        var disqus_config = function(){
+            this.page.url = 'http://zhcng.github.io/2017/05/02/Android回调机制/';
+            this.page.identifier = '2017/05/02/Android回调机制/';
+        };
+        var loadComment = function(){
+            var d = document, s = d.createElement('script');
+            s.src = '//zhcng.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        }
+    </script>
+    
+    <script> loadComment(); </script>
+
+</section>
+
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/2017/05/02/Android数据加密/" title="上一篇: Android数据加密">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2017/05/02/Android回调机制/">Android回调机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/05/02/Android数据加密/">Android数据加密</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/04/26/JVM-DVM-ART到底是些什么/">JVM,DVM,ART到底是些什么</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/04/26/学而时习之-Android知识点/">学而时习之--Android知识点</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/04/25/一步一步使用Hexo搭建Githup博客/">一步一步使用Hexo搭建Github博客</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                <i class="fa fa-copyright"></i> 
+                2016-2017 Chen
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank" title="快速、简洁且高效的博客框架">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="简而不减 Hexo 双栏博客主题  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>| </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit"  title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+    </div>
+    
+<script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 5;
+                var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        var oOpenInNew = {
+            
+            
+            
+            
+            
+            
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+            
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+  </div>
+</body>
+</html>
