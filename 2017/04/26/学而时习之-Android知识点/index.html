@@ -22,7 +22,7 @@
 <meta property="og:url" content="http://zhcng.github.io/2017/04/26/学而时习之-Android知识点/index.html">
 <meta property="og:site_name" content="博客--Chen">
 <meta property="og:description" content="这里用来记录一些不成体系的Android琐碎知识点。不定期更新，学而时习之。">
-<meta property="og:updated_time" content="2017-04-27T06:58:26.806Z">
+<meta property="og:updated_time" content="2017-05-15T09:38:54.006Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="学而时习之--Android知识点">
 <meta name="twitter:description" content="这里用来记录一些不成体系的Android琐碎知识点。不定期更新，学而时习之。">
@@ -320,6 +320,14 @@
 <li>用dp作为字体单位时，字体<strong>不会</strong>随着系统字体大小而改变。</li>
 </ul>
 <p>所以它们的区别就是，sp除了受屏幕密度影响外，还会受系统设置的字体大小影响。因此，除非一些不想跟随系统字体大小变化的特殊情况，一般都要用sp来作为字体的单位。</p>
+<h2 id="tools-context的作用"><a href="#tools-context的作用" class="headerlink" title="tools:context的作用"></a>tools:context的作用</h2><p>在新建一个activity时，如果连带建了layout，就会在布局开头里看到这一句：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">tools:context=".MainActivity"</div></pre></td></tr></table></figure>
+<p>如果去掉这一句，也并不能发现什么不同。那么这句话到底是什么意思，又有什么用呢？</p>
+<blockquote>
+<p>tools:context=”activity name”这一句不会被打包进APK。只是编辑器在你当前的ayout文件根据设置的”activity name”来渲染上下文。仅用于给你看<strong>所见即所得</strong>的效果而已。</p>
+</blockquote>
+<p>比如我们开发时，如果需要画一个EditText。想要看到它的文字显示效果，就需要加上android:text=”test”，然后再将其删掉。如果忘了删就会很尴尬。这时就可以采用tools:text=”test”来代替上面的写法，我们可以预览到文字效果，但并不会打包进APK。</p>
+<p>tools还有一些其他的指令，其中心思想是一样的，就是可以预览效果，但编译中不起效果。</p>
 
       
     </div>
@@ -331,7 +339,7 @@
         <p><span>本文标题:</span><a href="/2017/04/26/学而时习之-Android知识点/">学而时习之--Android知识点</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Chen</a></p>
         <p><span>发布时间:</span>2017-04-26, 16:10:06</p>
-        <p><span>最后更新:</span>2017-04-27, 14:58:26</p>
+        <p><span>最后更新:</span>2017-05-15, 17:38:54</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2017/04/26/学而时习之-Android知识点/" title="学而时习之--Android知识点">http://zhcng.github.io/2017/04/26/学而时习之-Android知识点/</a>
             <span class="copy-path" data-clipboard-text="原文: http://zhcng.github.io/2017/04/26/学而时习之-Android知识点/　　作者: Chen" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
@@ -367,7 +375,7 @@
     <div id="toc" class="toc-article">
         <strong class="toc-title">文章目录</strong>
         
-            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#SP与DP的区别"><span class="toc-number">1.</span> <span class="toc-text">SP与DP的区别</span></a></li></ol>
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#SP与DP的区别"><span class="toc-number">1.</span> <span class="toc-text">SP与DP的区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#tools-context的作用"><span class="toc-number">2.</span> <span class="toc-text">tools:context的作用</span></a></li></ol>
         
     </div>
     <style>
