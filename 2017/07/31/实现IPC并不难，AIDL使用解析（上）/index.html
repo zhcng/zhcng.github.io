@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no" />
+<meta name="author" content="Chen" />
+
+
+
+<meta name="description" content="IPC是 Inter-Process Communication 的缩写，含义为跨进程通信。通俗来说就是再两个进程之间进行数据交换的过程。而AIDL是 Android Interface Define Language 的缩写，含义为安卓接口定义语言， 是IPC进程间通信方式的一种。">
+<meta name="keywords" content="AIDL">
+<meta property="og:type" content="article">
+<meta property="og:title" content="实现IPC并不难，AIDL使用解析（上）">
+<meta property="og:url" content="http://zhcng.github.io/2017/07/31/实现IPC并不难，AIDL使用解析（上）/index.html">
+<meta property="og:site_name" content="Chen's Blog">
+<meta property="og:description" content="IPC是 Inter-Process Communication 的缩写，含义为跨进程通信。通俗来说就是再两个进程之间进行数据交换的过程。而AIDL是 Android Interface Define Language 的缩写，含义为安卓接口定义语言， 是IPC进程间通信方式的一种。">
+<meta property="og:image" content="http://opzh3oodr.bkt.clouddn.com/aidl/project_directory.png?imageMogr2/auto-orient/thumbnail/500x/blur/1x0/quality/75|watermark/2/text/Q2hlbidzIEJsb2c=/font/5b6u6L2v6ZuF6buR/fontsize/240/fill/IzhGMDIxNg==/dissolve/100/gravity/SouthEast/dx/10/dy/10|imageslim">
+<meta property="og:updated_time" content="2017-08-01T09:06:10.849Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="实现IPC并不难，AIDL使用解析（上）">
+<meta name="twitter:description" content="IPC是 Inter-Process Communication 的缩写，含义为跨进程通信。通俗来说就是再两个进程之间进行数据交换的过程。而AIDL是 Android Interface Define Language 的缩写，含义为安卓接口定义语言， 是IPC进程间通信方式的一种。">
+<meta name="twitter:image" content="http://opzh3oodr.bkt.clouddn.com/aidl/project_directory.png?imageMogr2/auto-orient/thumbnail/500x/blur/1x0/quality/75|watermark/2/text/Q2hlbidzIEJsb2c=/font/5b6u6L2v6ZuF6buR/fontsize/240/fill/IzhGMDIxNg==/dissolve/100/gravity/SouthEast/dx/10/dy/10|imageslim">
+
+<link rel="apple-touch-icon" href= "/apple-touch-icon.png">
+
+
+    <link rel="alternate" href="/atom.xml" title="Chen&#39;s Blog" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/img/lufei_favicon.ico">
+
+
+
+    <link href="//cdn.bootcss.com/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+    <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>实现IPC并不难，AIDL使用解析（上） | Chen&#39;s Blog</title>
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: true,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: undefined
+    }
+</script>
+
+
+    <script>
+        yiliaConfig.jquery_ui = [true, "//cdn.bootcss.com/jqueryui/1.10.4/jquery-ui.min.js", "//cdn.bootcss.com/jqueryui/1.10.4/css/jquery-ui.min.css"];
+    </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/img/lufei.jpg" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/">Chen</a></h1>
+        </hgroup>
+
+        
+        <p class="header-subtitle">诗酒趁年华</p>
+        
+
+        
+
+
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                        <li>关于我</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">主页</a></li>
+                        
+                            <li><a href="/archives/">所有文章</a></li>
+                        
+                            <li><a href="/tags/">标签云</a></li>
+                        
+                            <li><a href="/about/">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" href="mailto:artistzheng@163.com" title="Email"></a>
+                            
+                                <a class="fa 知乎" href="https://www.zhihu.com/people/guai-shou-39/activities" title="知乎"></a>
+                            
+                                <a class="fa 网易云音乐" href="http://music.163.com/#/user/home?id=56750088" title="网易云音乐"></a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AIDL/">AIDL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Yelee/">Yelee</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/加密/">加密</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/回调/">回调</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/控件/">控件</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/知识点/">知识点</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/虚拟机/">虚拟机</a></li></ul>
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a class="main-nav-link switch-friends-link" href="http://www.xueandroid.com/">玩Android</a>
+                    
+                      <a class="main-nav-link switch-friends-link" href="http://www.apkbus.com/">AndroidBus</a>
+                    
+                      <a class="main-nav-link switch-friends-link" href="http://reactnative.cn/">ReactNative中文网</a>
+                    
+                      <a class="main-nav-link switch-friends-link" href="http://www.iconfont.cn/">阿里妈妈图标库</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">谦谦君子 温润如玉</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">Chen</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/img/lufei.jpg" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页">Chen</a></h1>
+            </hgroup>
+            
+            <p class="header-subtitle">诗酒趁年华</p>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">主页</a></li>
+                
+                    <li><a href="/archives/">所有文章</a></li>
+                
+                    <li><a href="/tags/">标签云</a></li>
+                
+                    <li><a href="/about/">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" target="_blank" href="mailto:artistzheng@163.com" title="Email"></a>
+                            
+                                <a class="fa 知乎" target="_blank" href="https://www.zhihu.com/people/guai-shou-39/activities" title="知乎"></a>
+                            
+                                <a class="fa 网易云音乐" target="_blank" href="http://music.163.com/#/user/home?id=56750088" title="网易云音乐"></a>
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
+</nav>
+      <div class="body-wrap"><article id="post-实现IPC并不难，AIDL使用解析（上）" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2017/07/31/实现IPC并不难，AIDL使用解析（上）/" class="article-date">
+      <time datetime="2017-07-31T08:46:40.000Z" itemprop="datePublished">2017-07-31</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      实现IPC并不难，AIDL使用解析（上）
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/Android/">Android</a>
+    </div>
+
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AIDL/">AIDL</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>IPC是 Inter-Process Communication 的缩写，含义为跨进程通信。通俗来说就是再两个进程之间进行数据交换的过程。而AIDL是 Android Interface Define Language 的缩写，含义为安卓接口定义语言， 是IPC进程间通信方式的一种。</p>
+<a id="more"></a>
+<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>我们通过一个最简单的AIDL的示例，来了解怎么实现跨进程通信。假设有一个服务端和一个客户端，我们需要实现这样一个效果，在服务端储存管理图书，在客户端可以获取并能够修改服务端图书信息。在实现示例的过程中，讲解相应的概念信息。</p>
+<h2 id="添加Book类"><a href="#添加Book类" class="headerlink" title="添加Book类"></a>添加Book类</h2><p>我们新建一个项目，在里面new出两个Module，选择Phone &amp; Tablet Module类型的，分别命名为BookManagerSevice和BookManagerClient作为我们的服务端和客户端。首先，我们为服务端里面增添一个Book类，作为图书信息的Bean类。</p>
+<h3 id="AIDL可用文件类型"><a href="#AIDL可用文件类型" class="headerlink" title="AIDL可用文件类型"></a>AIDL可用文件类型</h3><p>这里，我们需要明确一点，在AIDL文件中，只有如下的文件类型才可以使用。</p>
+<ul>
+<li><strong>基本数据类型：</strong>int、long、char、boolean、double等</li>
+<li><strong>String和CharSequece</strong></li>
+<li><strong>List：</strong> 只支持ArrayList，里面的每个元素都必须被AIDL支持</li>
+<li><strong>Map：</strong> 只支持HashMap，里面的每个元素都必须被AIDL支持，包括Key和Value</li>
+<li><strong>List：</strong> 只支持ArrayList，里面的每个元素都必须被AIDL支持</li>
+<li><strong>Parcelable：</strong> 实现了Parcelable接口的对象</li>
+<li><strong>AIDL：</strong> AIDL接口本身也可以在AIDL文件中使用</li>
+</ul>
+<p>所以，我们需要在两个进程中传递Book信息，这个Book类就必须要实现Parcelable接口。</p>
+<h3 id="Parcelable序列化"><a href="#Parcelable序列化" class="headerlink" title="Parcelable序列化"></a>Parcelable序列化</h3><p>在Android中，实现序列化的方式通常有两种。一种是实现Serializable接口，它是Java中的序列化方式，使用简单但是开销很大，序列化和反序列化都需要大量的I/O操作。另一种是实现Parcelable接口，它是Android中的序列化方式，因此更适合用在Android平台上，它的缺点是使用起来比较麻烦，但是效率很高。一般来说，Parcelable主要用在内存序列化上，Serializable主要用在序列化到存储设备或网络传输上。而在AIDL中，如上面所说，我们只能选择Parcelable。</p>
+<p>以下为Book.java的代码，基本可作为Parcelable序列化的模板代码。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> com.zhcng.bookmanagerservice;</div><div class="line"></div><div class="line"><span class="keyword">import</span> android.os.Parcel;</div><div class="line"><span class="keyword">import</span> android.os.Parcelable;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Book</span> <span class="keyword">implements</span> <span class="title">Parcelable</span> </span>&#123;</div><div class="line">    <span class="keyword">public</span> <span class="keyword">int</span> bookId;</div><div class="line">    <span class="keyword">public</span> String bookName;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Book</span><span class="params">(<span class="keyword">int</span> bookId, String bookName)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.bookId = bookId;</div><div class="line">        <span class="keyword">this</span>.bookName = bookName;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 内容描述功能</div><div class="line">     * <span class="doctag">@return</span> 仅当当前对象存在文件描述符时返回1，否则返回0。</div><div class="line">     */</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">describeContents</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 将当前对象按顺序写入序列化结构中</div><div class="line">     */</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">writeToParcel</span><span class="params">(Parcel parcel, <span class="keyword">int</span> i)</span> </span>&#123;</div><div class="line">        parcel.writeInt(bookId);</div><div class="line">        parcel.writeString(bookName);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> Creator&lt;Book&gt; CREATOR = <span class="keyword">new</span> Creator&lt;Book&gt;() &#123;</div><div class="line">        <span class="comment">/**</span></div><div class="line">         * 从序列化的对象中创建原始对象</div><div class="line">         */</div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> Book <span class="title">createFromParcel</span><span class="params">(Parcel in)</span> </span>&#123;</div><div class="line">            <span class="keyword">return</span> <span class="keyword">new</span> Book(in);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="comment">/**</span></div><div class="line">         * 创建指定长度的原始对象数组</div><div class="line">         */</div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="keyword">public</span> Book[] newArray(<span class="keyword">int</span> size) &#123;</div><div class="line">            <span class="keyword">return</span> <span class="keyword">new</span> Book[size];</div><div class="line">        &#125;</div><div class="line">    &#125;;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 按顺序读取原始对象</div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="title">Book</span><span class="params">(Parcel in)</span> </span>&#123;</div><div class="line">        bookId = in.readInt();</div><div class="line">        bookName = in.readString();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> bookId + <span class="string">" : "</span> + bookName;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>从代码中我们可以看出，在Parcelable序列化过程中，需要实现的功能有内容描述、序列化和反序列化。内容描述由describeContents()方法完成，几乎所有情况都返回0，仅当当前对象存在文件描述符时返回1。序列化功能由writeToParcel()方法完成，通过Parcel中的一系列write方法将当前对象按顺序写入序列化结构中。反序列化功能由CREATOR来完成，其内部标明了如何创建序列化对象和数组，并通过Parcel中的一系列read方法将当前对象按顺序读取出来，完成反序列化过程。</p>
+<h2 id="创建AIDL文件"><a href="#创建AIDL文件" class="headerlink" title="创建AIDL文件"></a>创建AIDL文件</h2><p>如果AIDL文件中用到了自定义的Parcelable对象，那么必须新建一个和它同名的AIDL文件，并在其中声明它为Parcelable类型。所以，我们必须要创建一个Book.aidl，添加如下代码。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Book.aidl</span></div><div class="line"><span class="keyword">package</span> com.zhcng.bookmanagerservice;</div><div class="line"></div><div class="line">parcelable Book;</div></pre></td></tr></table></figure>
+<p>接下来，再创建一个IBookManager.aidl的文件，添加如下代码。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// IBookManager.aidl</span></div><div class="line"><span class="keyword">package</span> com.zhcng.bookmanagerservice;</div><div class="line"></div><div class="line"><span class="keyword">import</span> com.zhcng.bookmanagerservice.Book;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">interface</span> <span class="title">IBookManager</span> </span>&#123;</div><div class="line">    <span class="function">List&lt;Book&gt; <span class="title">getBookList</span><span class="params">()</span></span>;</div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">addBook</span> <span class="params">(in Book book)</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里注意，自定义的Parcelable对象和AIDL对象必须要显式的import进来，不管它们是否和当前的AIDL文件位于同一个包内。所以这里我们要加上import com.zhcng.bookmanagerservice.Book。另外，AIDL中除了基本数据类型，其他类型的参数必须标上方向：in、out或者inout，in表示输入型参数，out表示输出型参数，inout表示输入输出型参数。</p>
+<p>接下来，将Book.java以及AIDL文件连同包名一起复制到客户端中。注意报的结构一定要保持一致，否则会出错。这是因为客户端需要反序列化服务端中和AIDL接口相关的所有类，如果类的完整路径不一样，就无法成功反序列化。</p>
+<p>最后，在Android Studio中，点击Tools–&gt;Android–&gt;Sync Project with Gradle Files进行同步。同步完成后，会看到在build包里面生成了IBookManager.java文件。</p>
+<h2 id="服务端"><a href="#服务端" class="headerlink" title="服务端"></a>服务端</h2><p>定义完AIDL接口，接下来就要在服务端实现这个接口了。在服务端工程下创建一个Service，命名为BookManagerService，代码如下。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> com.zhcng.bookmanagerservice;</div><div class="line"></div><div class="line"><span class="keyword">import</span> android.app.Service;</div><div class="line"><span class="keyword">import</span> android.content.Intent;</div><div class="line"><span class="keyword">import</span> android.os.Binder;</div><div class="line"><span class="keyword">import</span> android.os.IBinder;</div><div class="line"><span class="keyword">import</span> android.os.RemoteException;</div><div class="line"></div><div class="line"><span class="keyword">import</span> java.util.List;</div><div class="line"><span class="keyword">import</span> java.util.concurrent.CopyOnWriteArrayList;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BookManagerService</span> <span class="keyword">extends</span> <span class="title">Service</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> CopyOnWriteArrayList&lt;Book&gt; mBookList = <span class="keyword">new</span> CopyOnWriteArrayList&lt;Book&gt;();</div><div class="line"></div><div class="line">    <span class="keyword">private</span> Binder mBinder = <span class="keyword">new</span> IBookManager.Stub() &#123;</div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> List&lt;Book&gt; <span class="title">getBookList</span><span class="params">()</span> <span class="keyword">throws</span> RemoteException </span>&#123;</div><div class="line">            <span class="keyword">return</span> mBookList;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addBook</span><span class="params">(Book book)</span> <span class="keyword">throws</span> RemoteException </span>&#123;</div><div class="line">            mBookList.add(book);</div><div class="line">        &#125;</div><div class="line">    &#125;;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>.onCreate();</div><div class="line">        mBookList.add(<span class="keyword">new</span> Book(<span class="number">1</span>, <span class="string">"Android"</span>));</div><div class="line">        mBookList.add(<span class="keyword">new</span> Book(<span class="number">2</span>, <span class="string">"Ios"</span>));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> IBinder <span class="title">onBind</span><span class="params">(Intent intent)</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> mBinder;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这是一个服务端Service的典型实现。首先创建了一个mBinder对象并在onBind中返回它，这个对象继承自IBookManager并实现了它内部的AIDL方法。实现过程比较简单，需要注意的是这里我们采用了CopyOnWriteArrayList，它支持并发读写。AIDL方法是在服务端的Binder线程池中执行的，因此当多个客户端同时连接时，会存在多个线程同时访问的情形，所以我们要在AIDL方法中处理线程同步。前面我们提到，AIDL中能够使用的List只有ArrayList，那为什么这里可以使用CopyOnWriteArrayList呢？因为这里虽然服务端返回的是CopyOnWriteArrayList，但是在Binder中会按照List的规范去访问数据并最终形成一个新的ArrayList传递给客户端，关于这点会在后面的程序中给予验证。</p>
+<p>最后，不要忘记了在AndroidManifest.xml中注册该Service。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">service</span></span></div><div class="line">    <span class="attr">android:name</span>=<span class="string">".BookManagerService"</span></div><div class="line">    <span class="attr">android:enabled</span>=<span class="string">"true"</span></div><div class="line">    <span class="attr">android:exported</span>=<span class="string">"true"</span>&gt;</div><div class="line">    <span class="tag">&lt;<span class="name">intent-filter</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">action</span> <span class="attr">android:name</span>=<span class="string">"com.zhcng.bookmanagerservice.BookManagerService"</span> /&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">intent-filter</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">service</span>&gt;</span></div></pre></td></tr></table></figure>
+<h2 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h2><p>客户端的实现就比较简单了。首先要绑定远程服务，绑定成功后将服务端返回的Binder对象转换成为AIDL接口，然后就可以通过这个接口去调用服务端的远程方法了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> com.zhcng.bookmanagerclient;</div><div class="line"></div><div class="line"><span class="keyword">import</span> android.content.ComponentName;</div><div class="line"><span class="keyword">import</span> android.content.Context;</div><div class="line"><span class="keyword">import</span> android.content.Intent;</div><div class="line"><span class="keyword">import</span> android.content.ServiceConnection;</div><div class="line"><span class="keyword">import</span> android.os.Bundle;</div><div class="line"><span class="keyword">import</span> android.os.IBinder;</div><div class="line"><span class="keyword">import</span> android.os.RemoteException;</div><div class="line"><span class="keyword">import</span> android.support.v7.app.AppCompatActivity;</div><div class="line"><span class="keyword">import</span> android.util.Log;</div><div class="line"></div><div class="line"><span class="keyword">import</span> com.zhcng.bookmanagerservice.Book;</div><div class="line"><span class="keyword">import</span> com.zhcng.bookmanagerservice.IBookManager;</div><div class="line"></div><div class="line"><span class="keyword">import</span> java.util.List;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BookManagerActivity</span> <span class="keyword">extends</span> <span class="title">AppCompatActivity</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String TAG = <span class="string">"BookManagerActivity"</span>;</div><div class="line">    <span class="keyword">private</span> ServiceConnection mConnection = <span class="keyword">new</span> ServiceConnection() &#123;</div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onServiceConnected</span><span class="params">(ComponentName componentName, IBinder iBinder)</span> </span>&#123;</div><div class="line">            IBookManager bookManager = IBookManager.Stub.asInterface(iBinder);</div><div class="line">            <span class="keyword">try</span> &#123;</div><div class="line">                List&lt;Book&gt; list = bookManager.getBookList();</div><div class="line">                Log.i(TAG, <span class="string">"query book list, list type:"</span> + list.getClass().getCanonicalName());</div><div class="line">                Log.i(TAG, <span class="string">"query book list:"</span> + list.toString());</div><div class="line">            &#125; <span class="keyword">catch</span> (RemoteException e) &#123;</div><div class="line">                e.printStackTrace();</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onServiceDisconnected</span><span class="params">(ComponentName componentName)</span> </span>&#123;</div><div class="line"></div><div class="line">        &#125;</div><div class="line">    &#125;;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</div><div class="line">        setContentView(R.layout.activity_book_manager);</div><div class="line">        bindService();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">bindService</span><span class="params">()</span> </span>&#123;</div><div class="line">        Intent intent = <span class="keyword">new</span> Intent();</div><div class="line">        intent.setAction(<span class="string">"com.zhcng.bookmanagerservice.BookManagerService"</span>);</div><div class="line">        intent.setComponent(<span class="keyword">new</span> ComponentName(<span class="string">"com.zhcng.bookmanagerservice"</span>, <span class="string">"com.zhcng.bookmanagerservice.BookManagerService"</span>));</div><div class="line">        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onDestroy</span><span class="params">()</span> </span>&#123;</div><div class="line">        unbindService(mConnection);</div><div class="line">        <span class="keyword">super</span>.onDestroy();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>我们在onCreate()方法里面通过action绑定Service，绑定成功后，通过bookManager去调用getBookList方法，获取到服务端图书的信息。要注意的是，服务端的方法有可能很久才能执行完毕，所以真实运用中这里需要处理避免ANR。接下来我们先启动服务端功能，再运行客户端工程，可以看到如下Log。</p>
+<blockquote>
+<p>I/BookManagerActivity: query book list, list type:java.util.ArrayList<br>I/BookManagerActivity: query book list:[1 : Android, 2 : Ios]</p>
+</blockquote>
+<p>可以看到，虽然服务端返回的是CopyOnWriteArrayList类型，但是客户端收到的仍然是ArrayList类型，证实了前面的结论。同时，在客户端成功获取到了服务端的图书数据。</p>
+<p>接下来，我们再调用另外一个接口addBook，在客户端给服务端添加一本书，看能否添加成功。修改onServiceConnected的代码如下。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onServiceConnected</span><span class="params">(ComponentName componentName, IBinder iBinder)</span> </span>&#123;</div><div class="line">    IBookManager bookManager = IBookManager.Stub.asInterface(iBinder);</div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">        List&lt;Book&gt; list = bookManager.getBookList();</div><div class="line">        Log.i(TAG, <span class="string">"query book list, list type:"</span> + list.getClass().getCanonicalName());</div><div class="line">        Log.i(TAG, <span class="string">"query book list:"</span> + list.toString());</div><div class="line">        Book newBook = <span class="keyword">new</span> Book(<span class="number">3</span>, <span class="string">"Web"</span>);</div><div class="line">        bookManager.addBook(newBook);</div><div class="line">        Log.i(TAG, <span class="string">"add book:"</span> + newBook);</div><div class="line">        List&lt;Book&gt; newList = bookManager.getBookList();</div><div class="line">        Log.i(TAG, <span class="string">"query new book list:"</span> + newList.toString());</div><div class="line">    &#125; <span class="keyword">catch</span> (RemoteException e) &#123;</div><div class="line">        e.printStackTrace();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>重新运行后查看Log，发现添加成功~</p>
+<blockquote>
+<p>I/BookManagerActivity: query book list, list type:java.util.ArrayList<br>I/BookManagerActivity: query book list:[1 : Android, 2 : Ios]<br>I/BookManagerActivity: add book:3 : Web<br>I/BookManagerActivity: query new book list:[1 : Android, 2 : Ios, 3 : Web]</p>
+</blockquote>
+<p>最后，附上整个项目的代码目录结构。<br><img src="http://opzh3oodr.bkt.clouddn.com/aidl/project_directory.png?imageMogr2/auto-orient/thumbnail/500x/blur/1x0/quality/75|watermark/2/text/Q2hlbidzIEJsb2c=/font/5b6u6L2v6ZuF6buR/fontsize/240/fill/IzhGMDIxNg==/dissolve/100/gravity/SouthEast/dx/10/dy/10|imageslim" alt="项目目录"></p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2017/07/31/实现IPC并不难，AIDL使用解析（上）/">实现IPC并不难，AIDL使用解析（上）</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">Chen</a></p>
+        <p><span>发布时间:</span>2017-07-31, 16:46:40</p>
+        <p><span>最后更新:</span>2017-08-01, 17:06:10</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2017/07/31/实现IPC并不难，AIDL使用解析（上）/" title="实现IPC并不难，AIDL使用解析（上）">http://zhcng.github.io/2017/07/31/实现IPC并不难，AIDL使用解析（上）/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://zhcng.github.io/2017/07/31/实现IPC并不难，AIDL使用解析（上）/　　作者: Chen" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/2017/05/12/Material-Design-实战/">
+                    Material Design 实战
+                </a>
+            </div>
+        
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#概述"><span class="toc-number">1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#添加Book类"><span class="toc-number">2.</span> <span class="toc-text">添加Book类</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#AIDL可用文件类型"><span class="toc-number">2.1.</span> <span class="toc-text">AIDL可用文件类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Parcelable序列化"><span class="toc-number">2.2.</span> <span class="toc-text">Parcelable序列化</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建AIDL文件"><span class="toc-number">3.</span> <span class="toc-text">创建AIDL文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#服务端"><span class="toc-number">4.</span> <span class="toc-text">服务端</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#客户端"><span class="toc-number">5.</span> <span class="toc-text">客户端</span></a></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"实现IPC并不难，AIDL使用解析（上）　| Chen's Blog　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+        <section id="comments">
+    <style> aside.comment-bar { margin: auto 30px; }</style>
+    <div id="disqus_thread"></div>
+    <script>
+        var disqus_config = function(){
+            this.page.url = 'http://zhcng.github.io/2017/07/31/实现IPC并不难，AIDL使用解析（上）/';
+            this.page.identifier = '2017/07/31/实现IPC并不难，AIDL使用解析（上）/';
+        };
+        var loadComment = function(){
+            var d = document, s = d.createElement('script');
+            s.src = '//zhcng.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        }
+    </script>
+    
+    <script> loadComment(); </script>
+
+</section>
+
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/2017/05/12/Material-Design-实战/" title="上一篇: Material Design 实战">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2017/07/31/实现IPC并不难，AIDL使用解析（上）/">实现IPC并不难，AIDL使用解析（上）</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/05/12/Material-Design-实战/">Material Design 实战</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/05/02/Android回调机制/">Android回调机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/05/02/Android数据加密/">Android数据加密</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/04/26/JVM-DVM-ART到底是些什么/">JVM,DVM,ART到底是些什么</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/04/26/学而时习之-Android知识点/">学而时习之--Android知识点</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/04/25/一步一步使用Hexo搭建Githup博客/">一步一步使用Hexo搭建Github博客</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                <i class="fa fa-copyright"></i> 
+                2016-2017 Chen
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank" title="快速、简洁且高效的博客框架">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="简而不减 Hexo 双栏博客主题  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>| </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit"  title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+    </div>
+    
+<script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 5;
+                var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        var oOpenInNew = {
+            
+            
+            
+            
+            
+            
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+            
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+  </div>
+</body>
+</html>
